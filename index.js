@@ -20,25 +20,27 @@ async function run(){
 
     try{
         const servicesCollection = client.db('xr-heritage').collection('servises');
-
+        const reviewCollection  = client.db('xr-heritage').collection('reviews');
 
         app.get('/servises',async(req,res)=>{
             const query = {}
+            const size = parseInt(req.query.size);
             const cursor = servicesCollection.find(query);
-            const servises = await cursor.toArray();
+            const servises = await cursor.limit(size).toArray();
             res.send(servises);
         }); 
 
         app.get('/servises/:id',async(req,res)=>{
             const id =req.params.id;
+
             const query = {_id: ObjectId(id)};
             const servises = await servicesCollection.findOne(query);
             res.send(servises);
         });
 
-        app.post('/',async (req,res)=>{
-            const order =req.body;
-            const result = await orderCollection.insertOne(order)
+        app.post('/reviews',async (req,res)=>{
+            const review =req.body;
+            const result = await reviewCollection.insertOne(review);
             res.send(result);
         });
     }
